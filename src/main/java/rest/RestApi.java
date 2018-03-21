@@ -1,14 +1,13 @@
 package rest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import services.MoneyTransferService;
 
-import java.util.logging.Logger;
-
-import static spark.Spark.get;
 import static spark.Spark.post;
 
 public class RestApi {
-    private static final Logger log = Logger.getLogger(RestApi.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(RestApi.class);
     private MoneyTransferService moneyService;
 
     public RestApi() {
@@ -20,10 +19,12 @@ public class RestApi {
             try {
                 moneyService.transferMoney(Long.valueOf(srcAccount), Long.valueOf(destAccount), Long.valueOf(amount));
             } catch (IllegalArgumentException ex) {
-                log.info("Error transfer money!" + ex);
+                log.info("Error transfer money! srcAccount={}, destAcc={}, amount={}",
+                        srcAccount, destAccount, amount, ex);
                 return "error";
             }
-            System.out.println(srcAccount.getClass() + "!" + destAccount.getClass());
+            log.info("Successful money transfer. srcAccount={}, destAcc={}, amount={}",
+                    srcAccount, destAccount, amount);
             return "ok";
         });
     }
