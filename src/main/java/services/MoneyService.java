@@ -5,11 +5,39 @@ import model.Account;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MoneyTransferService {
+public class MoneyService {
     private Map<Long, Account> accounts;
+    private volatile long currentAccId;
 
-    public MoneyTransferService() {
+    public MoneyService() {
         accounts = new ConcurrentHashMap<>();
+        currentAccId = 0;
+    }
+
+    public synchronized long createAccount() {
+        accounts.put(++currentAccId, new Account());
+        return currentAccId;
+    }
+
+    public long getAmount(String account) {
+        Account acc = accounts.get(Long.valueOf(account));
+        if (acc == null) {
+            return 0;
+        }
+        synchronized (acc) {
+            return acc.getAmount();
+        }
+    }
+
+    public void replenishAccount(String account, String amount) {
+        Account acc = accounts.get(Long.valueOf(account));
+        if (acc == null) {
+            throw new IllegalArgumentException("No such account=" + account);
+        }
+        synchronized (acc) {
+            acc.increaseAmmount(Long.valueOf(amount));
+        }
+
     }
 
     public void transferMoney(long srcAccount, long destAccount, long amount) {
@@ -34,7 +62,11 @@ public class MoneyTransferService {
 
         synchronized (first) {
             synchronized (second) {
-                accounts.get(srcAccount).decreaseAmmount(amount);
+                Account arcAcc = accounts.get(srcAccount);
+                if (arcAcc.getAmount() - amount < 0) {
+                    throw new IllegalArgumentException("Not enough money!");
+                }
+                arcAcc.decreaseAmmount(amount);
                 accounts.get(destAccount).increaseAmmount(amount);
             }
 

@@ -6,6 +6,10 @@ package model;
 public class Account {
     private long amount;
 
+    public Account() {
+        this.amount = 0;
+    }
+
     public long getAmount() {
         return amount;
     }
@@ -19,6 +23,6 @@ public class Account {
     }
 
     public void increaseAmmount(long incAmmount) {
-        amount -= incAmmount;
+        amount += incAmmount;
     }
 }
