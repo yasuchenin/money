@@ -1,10 +1,12 @@
+package ru.yasuchenin.money.test;
+
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import rest.RestServer;
+import ru.yasuchenin.money.rest.RestServer;
 
 public class RestTest {
     private RestServer restServer;

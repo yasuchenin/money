@@ -1,8 +1,8 @@
-package rest;
+package ru.yasuchenin.money.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import services.MoneyService;
+import ru.yasuchenin.money.services.MoneyService;
 import spark.Spark;
 
 import static spark.Spark.*;

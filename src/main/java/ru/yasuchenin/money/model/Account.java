@@ -1,4 +1,4 @@
-package model;
+package ru.yasuchenin.money.model;
 
 /**
  * not thread-safe

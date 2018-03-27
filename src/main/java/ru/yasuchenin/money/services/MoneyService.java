@@ -1,6 +1,6 @@
-package services;
+package ru.yasuchenin.money.services;
 
-import model.Account;
+import ru.yasuchenin.money.model.Account;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
