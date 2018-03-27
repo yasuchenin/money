@@ -19,12 +19,10 @@ public class RestTest {
 
     @After
     public void tearDown() {
-
         restServer.stop();
         try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-
+            Thread.sleep(2000); //because there is no "stop" handler in Spark
+        } catch (InterruptedException ignore) {
         }
 
     }
