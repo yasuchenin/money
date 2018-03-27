@@ -8,30 +8,66 @@ import rest.RestServer;
 
 public class RestTest {
     private RestServer restServer;
+    private ResteasyClient resteasyClient;
 
     @Before
     public void setUp() {
         restServer = new RestServer();
         restServer.start();
+        resteasyClient = new ResteasyClientBuilder().build();
     }
 
     @After
     public void tearDown() {
+
         restServer.stop();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+
+        }
+
     }
 
     @Test
-    public void name() {
-        ResteasyClient resteasyClient = new ResteasyClientBuilder().build();
-        resteasyClient.target("http://localhost:8080/accounts").request().put(null);
-        resteasyClient.target("http://localhost:8080/accounts").request().put(null);
+    public void testReplenish() {
+        String id1 = resteasyClient.target("http://localhost:8080/accounts").request().put(null, String.class);
+        String firstAccAmount = resteasyClient.target("http://localhost:8080/accounts/" + id1 + "/amount")
+                .request().get(String.class);
+        Assert.assertEquals("0", firstAccAmount);
 
-        resteasyClient.target("http://localhost:8080/accounts/1/replenish?amount=1000")
+        resteasyClient.target("http://localhost:8080/accounts/" + id1 + "/replenish?amount=100")
                 .request().post(null);
-        resteasyClient.target("http://localhost:8080/accounts/1/transfer?destAccount=2&amount=100")
+        firstAccAmount = resteasyClient.target("http://localhost:8080/accounts/" + id1 + "/amount")
+                .request().get(String.class);
+        Assert.assertEquals("100", firstAccAmount);
+
+    }
+
+    @Test
+    public void testInvalidTransfer() {
+        String id1 = resteasyClient.target("http://localhost:8080/accounts").request().put(null, String.class);
+        String id2 = resteasyClient.target("http://localhost:8080/accounts").request().put(null, String.class);
+
+        resteasyClient.target("http://localhost:8080/accounts/" + id1 + "/replenish?amount=100")
+                .request().post(null);
+        String res = resteasyClient.target("http://localhost:8080/accounts/" + id1 + "/transfer?destAccount=" + id2 + "&amount=500")
+                .request().post(null, String.class);
+
+        Assert.assertEquals("error", res);
+    }
+
+    @Test
+    public void testTransfer() {
+        String id1 = resteasyClient.target("http://localhost:8080/accounts").request().put(null, String.class);
+        String id2 = resteasyClient.target("http://localhost:8080/accounts").request().put(null, String.class);
+
+        resteasyClient.target("http://localhost:8080/accounts/" + id1 + "/replenish?amount=1000")
+                .request().post(null);
+        resteasyClient.target("http://localhost:8080/accounts/" + id1 + "/transfer?destAccount=" + id2 + "&amount=100")
                 .request().post(null);
 
-        String firstAccAmount = resteasyClient.target("http://localhost:8080/accounts/1/amount")
+        String firstAccAmount = resteasyClient.target("http://localhost:8080/accounts/" + id1 + "/amount")
                 .request().get(String.class);
 
         System.out.println("first acc amount=" + firstAccAmount);

@@ -14,5 +14,4 @@ dependencies {
     compile group: 'com.sparkjava', name: 'spark-core', version: '2.7.2'
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
     compile group: 'org.jboss.resteasy', name: 'resteasy-client', version: '3.5.0.Final'
-
 }
